@@ -1,0 +1,99 @@
+openapi: 3.0.2
+info:
+  title: Bike Sharing
+  description: "Bike sharing API....."
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: jkassels@atb.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1-SNAPSHOT
+externalDocs:
+  description: Find out more about Bike Sharing
+  url: https://bikesharing.io/about/
+servers:
+- url: https://localhost/v2
+tags:
+- name: bike
+  description: Endpoints to maintain the bike inventory
+  externalDocs:
+    description: Find out more about bike sharing
+    url: http://bikesharing.io
+paths:
+  /bikes/{bikeid}:
+    get:
+      tags:
+      - bikes
+      summary: Get bike by bikeid
+      operationId: getBikeById
+      parameters:
+      - name: bikeid
+        in: path
+        description: 'The unique identifier of the bike that needs to be fetched. '
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bike'
+        404:
+          description: Bike not found
+          content: {}
+  /bikes:
+    get:
+      tags:
+      - bikes
+      summary: Get all bikes 
+      operationId: getBikes
+      parameters:
+      - name: sharingStatus
+        in: query
+        description: 'Return only bikes with a certain sharingStatus. '
+        required: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bikes'
+        404:
+          description: No bikes found
+          content: {}
+security:
+  - api_key: []
+components:
+  schemas:
+    Bikes:
+      type: array
+      items: 
+        $ref: '#/components/schemas/Bike'
+    Bike:
+      type: object
+      properties:
+        bikeid:
+          type: integer
+          format: int64
+        brand:
+          type: string
+        type:
+          type: string
+        sharingStatus:
+          type: string
+          description: User Status
+          enum: 
+            - available
+            - riding
+            - maintenance
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
